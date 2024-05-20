@@ -28,13 +28,13 @@
 
         button {
             cursor: pointer;
-            background-color: #007bff;
+            background-color: #28a745;
             color: #fff;
             border: none;
         }
 
             button:hover {
-                background-color: #0056b3;
+                background-color: #218838;
             }
 
         #response {
@@ -84,13 +84,13 @@
         function sendMessage() {
             const recipient = document.getElementById('recipientNumber').value;
             const message = document.getElementById('messageText').value;
-            apiCall('sendMessage', { recipient, message });
+            apiCall('sendMessage', { chatId: recipient + '@c.us', message });
         }
 
         function sendFileByUrl() {
             const recipient = document.getElementById('recipientNumber').value;
             const url = document.getElementById('fileUrl').value;
-            apiCall('sendFileByUrl', { recipient, url });
+            apiCall('sendFileByUrl', { chatId: recipient + '@c.us', urlFile: url, fileName: 'file_from_url', caption: 'File sent from URL' });
         }
 
         function apiCall(method, data) {

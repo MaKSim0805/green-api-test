@@ -34,7 +34,7 @@
         }
 
             button:hover {
-                background-color: #218838;
+                background-color: #07776e;
             }
 
         #response {
@@ -72,28 +72,29 @@
 
     <script>
         const apiUrl = 'https://7103.api.greenapi.com';
+        const apiTokenInstance = "f6e9728c8fae428cac581133bba0061dadef190fd7e84ff794";
 
         function getSettings() {
-            apiCall('getSettings', {});
+            apiCallPOST('getSettings'+'/'+ apiTokenInstance, {});
         }
 
         function getStateInstance() {
-            apiCall('getStateInstance', {});
+            apiCallGET('getStateInstance'+'/'+ apiTokenInstance, {});
         }
 
         function sendMessage() {
             const recipient = document.getElementById('recipientNumber').value;
             const message = document.getElementById('messageText').value;
-            apiCall('sendMessage', { chatId: recipient + '@c.us', message });
+            apiCallPOST('sendMessage'+'/'+ apiTokenInstance, { chatId: recipient + '@c.us', message });
         }
 
         function sendFileByUrl() {
             const recipient = document.getElementById('recipientNumber').value;
             const url = document.getElementById('fileUrl').value;
-            apiCall('sendFileByUrl', { chatId: recipient + '@c.us', urlFile: url, fileName: 'file_from_url', caption: 'File sent from URL' });
+            apiCallPOST('sendFileByUrl'+'/'+ apiTokenInstance, { chatId: recipient + '@c.us', urlFile: url, fileName: 'file_from_url', caption: 'File sent from URL' });
         }
 
-        function apiCall(method, data) {
+        function apiCallPOST(method, data) {
             const idInstance = document.getElementById('idInstance').value;
             const apiTokenInstance = document.getElementById('apiTokenInstance').value;
 
@@ -104,6 +105,25 @@
                     'Authorization': `Bearer ${apiTokenInstance}`
                 },
                 body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById('response').textContent = 'Error: ' + error.message;
+                });
+        }
+        function apiCallGET(method) {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+
+            fetch(`${apiUrl}/waInstance${idInstance}/${method}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiTokenInstance}`
+                },
             })
                 .then(response => response.json())
                 .then(data => {

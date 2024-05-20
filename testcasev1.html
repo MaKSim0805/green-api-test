@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GREEN-API Interaction Page</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; }
+        .container { width: 350px; margin: 50px auto; padding: 20px; border: 1px solid #ccc; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        input, button, textarea { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; }
+        button { cursor: pointer; background-color: #007bff; color: #fff; border: none; }
+        button:hover { background-color: #0056b3; }
+        #response { height: 150px; margin-top: 10px; background-color: #f0f0f0; padding: 10px; font-family: monospace; resize: none; }
+        .label { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="text" id="idInstance" placeholder="idInstance">
+        <input type="text" id="apiTokenInstance" placeholder="ApiTokenInstance">
+        
+        <button onclick="getSettings()">getSettings</button>
+        <button onclick="getStateInstance()">getStateInstance</button>
+
+        <input type="text" id="recipientNumber" placeholder="Recipient Number" class="label">
+        <input type="text" id="messageText" placeholder="Message">
+        <button onclick="sendMessage()">sendMessage</button>
+
+        <input type="text" id="fileUrl" placeholder="File URL">
+        <button onclick="sendFileByUrl()">sendFileByUrl</button>
+
+        <textarea id="response" readonly></textarea>
+    </div>
+
+    <script>
+        const apiUrl = 'https://api.green-api.com';
+
+        function getSettings() {
+            apiCall('getSettings', {});
+        }
+
+        function getStateInstance() {
+            apiCall('getStateInstance', {});
+        }
+
+        function sendMessage() {
+            const recipient = document.getElementById('recipientNumber').value;
+            const message = document.getElementById('messageText').value;
+            apiCall('sendMessage', { recipient, message });
+        }
+
+        function sendFileByUrl() {
+            const recipient = document.getElementById('recipientNumber').value;
+            const url = document.getElementById('fileUrl').value;
+            apiCall('sendFileByUrl', { recipient, url });
+        }
+
+        function apiCall(method, data) {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+
+            fetch(`${apiUrl}/${method}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'idInstance': idInstance,
+                    'ApiTokenInstance': apiTokenInstance
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('response').textContent = 'Error: ' + error.message;
+            });
+        }
+    </script>
+</body>
+</html>
